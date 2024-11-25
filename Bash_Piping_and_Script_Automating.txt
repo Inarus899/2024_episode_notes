@@ -1,0 +1,175 @@
+# Let's say you want to have a banner on your screen
+# we've used figlet before for a simple clock, let's start with that
+man figlet
+
+# If we look at the fontfile, it doesn't tell us the options, but if we look at
+# the fontdirectory section, we see a way to show us the default directory
+figlet -I2
+
+# if we continue down the man pages, we see a lot more options, and the -I5
+# might be interesting
+figlet -I5
+
+# we can see all the files in the directory with:
+ls /usr/share/figlet
+
+# so which are font files, and which are something else?
+figlet "test" -f moscow
+figlet "test" -f pagga
+figlet "test" -f script
+
+# For this video, let's remember that ls does something weird behind the scenes.
+# It actually will put out each file or directory on its own line.
+# if we pipe out ls to anything, each file will be on a line
+ls /usr/share/figlet | cat
+
+# i did come up with a very convoluted way of filtering out files based on
+# extensions. It still demonstrates the power of piping, even when domain
+# knowledge is lacking.
+
+# first, we want to reverse each file name for easier sorting
+ls /usr/share/figlet | rev
+
+# then we want to sort all the files so extensions are grouped. This was because
+# I was planning on just using vim to delete unneeded lines.
+ls /usr/share/figlet | rev | sort
+
+# of course, we want to undo the reverse from earlier.
+ls /usr/share/figlet | rev | sort | rev
+
+# and if we put this output to a file, we have a list of possible fonts
+ls /usr/share/figlet | rev | sort | rev > fonts.txt
+
+# But it dawned on me to just use sed. sed is short for stream editor
+man sed
+
+# so we can use a simple pattern matching format to delete lines that contain
+# the substring flc. The dollar sign is to mark the end of the line. Since sed
+# is looking at things line by line, there shouldn't be a new line anywhere in
+# the stream.
+ls /usr/share/figlet | sed '/flc$/d'
+
+# more info on characters can be found in the man pages, section 7
+man 7 regex
+
+# using our regex knowledge, and the fact that we are down to two file
+# extensions, we can remove those from the list, since we don't need them
+ls /usr/share/figlet | sed '/flc$/d' | sed 's/\.[t,f]lf$//'
+
+ls /usr/share/figlet | sed '/flc$/d;s/\.[t,f]lf$//'
+
+ls /usr/share/figlet | \
+sed '/flc$/d' | \
+sed 's/\.[t,f]lf$//'
+
+# we will want to print some text with each font type, so lets create the
+# commands by adding figlet -f at the front of each line
+ls /usr/share/figlet | \
+sed '/flc$/d' | \
+sed 's/\.[t,f]lf$//' | \
+sed 's/^/figlet $text -f /'
+
+# If we were to execute these lines, we would just get all 39 font examples put
+# to screen to fast to read, so let's put in a pause with read
+ls /usr/share/figlet | \
+sed '/flc$/d' | \
+sed 's/\.[t,f]lf$//' | \
+sed 's/^/figlet $text -f /' | \
+sed 's/$/\nread -p ""/'
+
+# now we have a script that will put text to the screen and wait for the user
+# before moving to the next one. But how will we know which font style we are
+# seeing?
+ls /usr/share/figlet | \
+sed '/flc$/d' | \
+sed 's/\.[t,f]lf$//' | \
+sed 's/.*/echo "&"\n figlet $text -f &\nread -p ""/'
+
+# let's make that a file
+ls /usr/share/figlet | \
+sed '/flc$/d' | \
+sed 's/\.[t,f]lf$//' | \
+sed 's/.*/echo "&"\n figlet $text -f &\nread -p ""/' > \
+font.sh
+
+# make it executable.
+chmod +x font.sh
+
+# we are using a variable labeled text, so let's define that
+text=${text}
+
+# now, since we are using a variable, we can't just run it like normal unless we
+# define the variable inside the script. Instead, we can use our existing
+# variable with source (maybe screenshot man bash SHELL BUILTIN COMMANDS)
+source font.sh
+
+# If we go back to the man pages of figlet, we see mention a different program,
+# one that explains why some font files are flf and some are tlf
+# screen shot part of the man page
+man figlet
+
+# toilet options. It lists the directory of the fonts and the extensions that
+# work for toilet (and figlet)
+man toilet
+
+# it works the same as figlet, and we can show that by editing our script
+cat font.sh | sed 's/figlet/toilet/'
+
+# but this doesn't change the font file.
+cat font.sh
+
+# We could make a new file, or we can show off one more feature of sed
+sed -i 's/figlet/toilet/' font.sh
+cat font.sh
+
+source font.sh
+
+# toilet can do more with the text, like adding color
+toilet -F list
+
+# we can make it rainbow
+toilet $text -F gay
+
+# we can add a border
+toilet $text -F gay -F border
+
+# we can make the border rainbow by changing the order
+toilet $text -F border -F gay
+
+# and we can flip it if we want
+toilet $text -F border -F gay -F 180
+
+# let's clean up that command a bit, and keep it rightside up
+toilet "Exhausted" \
+  --font bigmono9 \
+  --filter border \
+  --filter gay
+
+# toilet also allows for exporting the output in different formats
+toilet --export list
+
+# so lets try one, svg
+toilet "Exhausted" \
+  --font bigmono9 \
+  --filter border \
+  --filter gay \
+  --export svg
+
+toilet "Exhausted" \
+  --font bigmono9 \
+  --filter border \
+  --filter gay \
+  --export svg \
+> logo.svg
+
+# one more
+toilet "Exhausted" \
+  --font mono9 \
+  --filter border
+
+# let's save that
+toilet "Exhausted" \
+  --font mono9 \
+  --filter border \
+  --export svg > \
+logo2.svg
