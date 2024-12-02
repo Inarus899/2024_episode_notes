@@ -1,0 +1,159 @@
+##########
+# User 1 #
+##########
+
+# Showing how a hint shows up if using init a certain way
+mkdir temp_project
+cd temp_project
+git init
+git branch -m main
+
+
+# Deleting that temp directory
+cd ..
+rm -rf temp_project
+
+# Using init in a way to avoid the hint
+mkdir project
+cd project
+git init -b main
+
+# create a simple list and show it
+echo {0..10..2}a | sed 's/a /\n/g' > list.txt
+cat list.txt
+
+# One way of making a commit
+git add list.txt
+git commit -m "Make a list"
+
+# your server info will almost 100% be different than in what was in the video
+git remote add origin <the server info>
+
+# need to do this if you haven't updated your ~/.gitconfig as done later
+git push --set-upstream origin main
+
+# push to server
+git push
+
+##########
+# User 2 #
+##########
+
+# again, your server info will be different. Github and Gitlab have
+# documentation that could help.
+git clone <the server info>
+cd project
+
+git checkout main
+
+# edit list and see that it worked
+sed -i 's/10a/10/;s/4/4\n5/' list.txt
+cat list.txt
+
+# a 2nd way of adding files to a commit
+git add .
+git commit -m "Add 5, clean list"
+git push
+
+##########
+# User 1 #
+##########
+
+# get changes from the server
+git pull
+
+# create a new branch so we can leave main alone
+git checkout -b more_numbers
+git branch --list
+git push
+
+# an example of using the git documentation
+git help config
+
+git config --global push.autoSetupRemote true
+
+# Introduce another bug
+sed -i 's/0/0\n1/;s/2/2\n3/' list.txt
+cat list.txt
+
+# add and commit at the same time
+git commit -a -m "Add some more numbers"
+git push
+
+##########
+# User 2 #
+##########
+
+# pull changes and see two different ways to list branches
+git pull
+git branch --list
+git branch -a
+
+git checkout more_numbers
+# prompt says to pull
+git pull
+
+# we want to be back in main for creating a new branch so the new branch is
+# based on where main is at this moment, and not what is happening in another
+# branch
+git checkout main
+
+# create our new branch
+git checkout -b bigger_numbers
+
+# make changes and check
+echo {12..100..2}a | sed 's/a/\n/g' >> list.txt
+sed -i 's/ //' list.txt
+cat list.txt
+
+# add and commit again
+git commit -a -m "More bigger numbers"
+
+git config --global push.autoSetupRemote true
+git push
+
+##########
+# User 1 #
+##########
+
+# merging happens by bringing in the changes. So to merge back into main, we
+# need to be in the main branch
+git checkout main
+git merge more_numbers
+git status
+git push
+
+##########
+# User 2 #
+##########
+
+git checkout main
+git pull
+git merge bigger_numbers
+
+# if a problem occurs, we can investigate a few ways
+git diff
+cat list.txt
+
+# undo merge
+git merge --abort
+
+# but we want to fix the merge
+git merge bigger_numbers
+
+# cat with line numbers
+cat -n list.txt
+# delete lines 10-12 and then delete line 59
+sed -e '10,12d;59d' -i list.txt
+
+git status
+git add list.txt
+git commit -m "Merge and clean list"
+git push
+
+##########
+# User 1 #
+##########
+
+git pull
+cat list.txt
