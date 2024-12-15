@@ -1,0 +1,61 @@
+# every program has a man page, some more useful than others.
+
+# The obligatory fortune, cowsay, lolcat pipeline
+# fortune pulls a random quote
+# cowsay makes it seem like a cow is saying what is passed into cowsay
+# lolcat makes it colorful
+fortune | cowsay | lolcat
+
+cowsay -l
+
+fortune | cowsay -f snowman | lolcat
+
+# Next is sl, short for steam locomotive, but really a tool to punish users who
+# type in sl instead of ls
+sl
+
+# allows for interupts
+sl -e
+
+# F is for flying
+sl -Fe
+
+# accident and little
+sl -ale
+
+# doesn't always work with lolcat
+sl -e | lolcat
+
+cmatrix
+
+# see man page on how to change the colors
+# a for asynchronous and b is for BOLD
+cmatrix -ab
+
+# bad man page, but has a help flag
+aafire
+aafire --help
+
+# this is how I got it to work on my machine, but usually this isn't needed
+aafire -driver slang
+
+# fire with color
+cacafire
+
+# create a random tree
+cbonsai
+
+# Life = 50
+cbonsai -L 50
+
+# -l is for animation
+cbonsai -L 50 -l
+
+# smaller values for -t means faster growth
+cbonsai -L 50 -l -t 0.01
+
+# not found in the repository
+# found this online with no attribution, then found a ChristBASHTree git
+# repository. Not sure if source, but older than other sites
+# https://github.com/sergiolepore/ChristBASHTree
+scripts/tree.sh
