@@ -1,0 +1,65 @@
+# show current processes
+ps -ef
+
+# printing is probably most common use
+ps -ef | awk '{print}'
+ps -ef | awk '{print $1, $5, $8}'
+
+# commas add the space
+# no commas means no space
+ps -ef | awk '{print $1 $5 $8}'
+
+# can add strings in the middle
+ps -ef | awk '{print $1 " running " $5 "  " $8}'
+
+# (test for tabs)
+ps -ef | awk '{print $1 "\t" $5 "  " $8}'
+
+# we can use it on files, so let's create one
+ps -ef > test.txt
+
+# can be used with file
+awk '{print $2}' test.txt
+
+# Awk is a scripting language, and can do a lot
+awk 'BEGIN{printf "Col1\tCol2\tCol3\n"} {print $2"\t"$3"\t"$7} END{print "Done"}' test.txt
+
+# change the field separator
+ps -ef | awk -F: '{print $1}'
+
+# can also change the variable FS to do the same
+ps -ef | awk -v FS=: '{print $1}'
+
+# can use sed/grep/vim style calls
+ps -ef | awk ' /tty/ {print}'
+
+# no command means print whole line
+
+# you can write awk script files and call them instead of typing it out
+cat test.awk
+
+# can use files with commands
+ps -ef | awk -f test.awk
+
+awk -f test.awk test.txt
+
+# can do some programming
+ps -ef | awk '/tty/{++c} END {print "Total matched: ", c}'
+
+# print based on length
+ps -ef | awk 'length($0) < 100'
+
+# regex works as expected
+ps -ef | awk '/^root/'
+ps -ef | awk '!/^root/'
+
+# . for any character, ? zero or one, * zero or more, + one or more
+# ^ beginning of line, $ end of line
+# [] as expected
+# | for or
+
+# Show all set variables
+awk -d ''
+cat awkvars.out
+# or
+awk --dump-variables=my_awk_vars.txt ''
