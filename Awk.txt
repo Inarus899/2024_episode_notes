@@ -55,7 +55,7 @@ ps -ef | awk '!/^root/'
 
 # . for any character, ? zero or one, * zero or more, + one or more
 # ^ beginning of line, $ end of line
-# [] as expected
+# [] is any character in it e.g. [acf-j]
 # | for or
 
 # Show all set variables

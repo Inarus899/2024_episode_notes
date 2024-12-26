@@ -41,6 +41,7 @@ ls /usr/share/figlet | rev | sort | rev
 ls /usr/share/figlet | rev | sort | rev > fonts.txt
 
 # But it dawned on me to just use sed. sed is short for stream editor
+# It is also based on ed, a very old text editor that is still on many systems
 man sed
 
 # so we can use a simple pattern matching format to delete lines that contain
