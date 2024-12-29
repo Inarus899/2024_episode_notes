@@ -1,0 +1,113 @@
+# there are 4 files
+ls
+
+# let's look at what is in hello.py
+cat hello.py
+
+# the contents of the file is one line: print("Hello World")
+
+# this is a perfectly valid lua script (and python)
+lua hello.py
+
+# this isn't a git directory, yet
+git init -b main
+git add .
+git commit -m "Create repository"
+
+# we can see everything is good
+git status
+
+# Let's make a conflict and resolve it in a new way
+git checkout -b branch_1
+
+# this replaces the contents of hello.py. Use >> to append
+echo 'print("Hello, World!")' > hello.py
+git add hello.py
+git commit -m "Improve hello"
+
+# change main branch to have a conflict
+git checkout main
+echo 'print("Hello Earth")' > hello.py
+git add hello.py
+git commit -m "Fix hello"
+
+git merge branch_1
+
+# https://git-scm.com/docs/merge-config
+# vimdiff might be the default, but it doesn't hurt to make sure
+git config merge.tool vimdiff
+
+# you can get around this setting if you use git mergetool -y
+# if you have more than one file to fix, mergetool will prompt before each
+# instance, and -y or the following line will just auto into the next fix.
+git config mergetool.prompt false
+
+git mergetool
+
+# need to manually fix the issue.
+# Can swap windows with ctrl+w
+# :diffoff!
+# :hi StatusLine ctermbg=black ctermfg=white
+# :hi StatusLineNC ctermbg=black ctermfg=white
+# w to write(save), q to quit, a to apply to all (quit all)
+# :wqa
+
+# before commiting the merge, delete extra files created from the merge
+git status
+
+# git clean can be setup with config options, but let's just run it without any
+git clean
+
+# -n is for dry run, see what will be deleted but don't delete
+git clean -n
+
+# you could use interactive mode
+git clean -i
+
+# if you just want to clean with no questions, -f for force
+git clean -f
+
+# we need to commit the changes that were made with the merge
+git status
+git commit -m "Merge improvements"
+
+# Structure Merge Conflict
+# try deleting a file and then not in another branch
+
+# What if we delete a file in one branch, but change it in another?
+git checkout branch_1
+
+# let us change hello.py to imply that we want it to not be deleted.
+echo 'print("second line")' >> hello.py
+
+# Do the commit
+git add hello.py
+git commit -m "Add second line"
+
+# delete hello from the main branch
+git checkout main
+git rm hello.py
+
+# git rm file will stage the deletion of a file for the next commit
+git status
+
+# if we don't commit, then we have uncommited changes.
+git merge branch_1
+
+# we have errors. This can work for any type of conflict, just stash away the
+# local changes.
+git stash
+git merge branch_1
+
+# We can see where we are for our branch
+git status
+
+# let us look at what we've done
+git log --graph --oneline --all --decorate
+
+# now we can remove the stash, though it can stay
+# if we just use git stash drop, it will drop the most recent one
+git stash drop stash@{0}
+
+# one more look at the graph
+git log --graph --oneline --all --decorate
